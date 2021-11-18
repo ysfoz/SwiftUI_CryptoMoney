@@ -9,7 +9,7 @@ import Foundation
 
 
 class Webservice {
-    func downloadCurrencies(url : URL, completion: @escaping (Result<[CrypteCurrency]?, DownloaderError>)-> Void) {
+    func downloadCurrencies(url : URL, completion: @escaping (Result<[CryptoCurrency]?, DownloaderError>)-> Void) {
         URLSession.shared.dataTask(with: url) { data, response, error in
             if let error = error {
                 print(error.localizedDescription)
@@ -20,7 +20,7 @@ class Webservice {
                 return completion(.failure(.noData))
             }
             
-            guard let currencies = try? JSONDecoder().decode([CrypteCurrency].self, from: data) else {
+            guard let currencies = try? JSONDecoder().decode([CryptoCurrency].self, from: data) else {
                 return completion(.failure(.dataPArseError))
             }
             

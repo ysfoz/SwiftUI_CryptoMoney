@@ -9,14 +9,30 @@ import Foundation
 
 class CryptoListViewModel : ObservableObject {
     
+    // observable yani izenebilir, firebase deki listenir gibi, her degisiklilgi kullnildigi vieew bildiri. @published yazdigimi degiskeni takip ediyor.
+    
+    @Published var cryptoList = [CryptoViewModal]()
+    
     let webservice = Webservice()
     
-    func downloadCryptos() {
-//        webservice.downloadCurrencies
+    func downloadCryptos(url: URL) {
+        webservice.downloadCurrencies(url: url) { result in
+            switch result {
+            case .failure(let error):
+                print(error)
+            
+            case .success(let cryptos):
+                if let cryptos = cryptos {
+                    
+                    // bu kisim main user interface ile ilgili olgugun icin main icersinde yapiyoruz.
+                    DispatchQueue.main.async {
+                        self.cryptoList = cryptos.map(CryptoViewModal.init)
+                    }
+                    
+                }
+            }
+        }
     }
-    
-    
-    
     
 }
 
@@ -25,7 +41,7 @@ class CryptoListViewModel : ObservableObject {
 
 struct CryptoViewModal {
     
-    let crypto : CrypteCurrency
+    let crypto : CryptoCurrency
     
     var id: UUID? {
         crypto.id
@@ -33,7 +49,7 @@ struct CryptoViewModal {
     var currency : String {
         crypto.currency
     }
-    var pirce : String {
+    var price : String {
         crypto.price
     }
     
