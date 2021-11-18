@@ -7,6 +7,9 @@
 
 import Foundation
 
+
+// bu sekilde mainActor olarak tanimlarsak buradaki tum propertyler main thread de islme gorur, bu yuzden dispatchqueue kullanmaya gerek kalmaz
+@MainActor
 class CryptoListViewModel : ObservableObject {
     
     // observable yani izenebilir, firebase deki listenir gibi, her degisiklilgi kullnildigi vieew bildiri. @published yazdigimi degiskeni takip ediyor.
@@ -15,6 +18,23 @@ class CryptoListViewModel : ObservableObject {
     
     let webservice = Webservice()
     
+    // async await version
+    func downloadCryptosAsync (url:URL) async {
+        do{
+       let cryptos = try await webservice.downloadCurrenciesAsync(url: url)
+            self.cryptoList = cryptos.map(CryptoViewModal.init)
+            
+//            DispatchQueue.main.async {
+//                self.cryptoList = cryptos.map(CryptoViewModal.init)
+//            }
+        } catch {
+            print("error")
+        }
+    }
+    
+    // old version
+    
+    /*
     func downloadCryptos(url: URL) {
         webservice.downloadCurrencies(url: url) { result in
             switch result {
@@ -33,6 +53,7 @@ class CryptoListViewModel : ObservableObject {
             }
         }
     }
+     */
     
 }
 

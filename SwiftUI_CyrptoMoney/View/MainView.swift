@@ -32,10 +32,31 @@ struct MainView: View {
                         .foregroundColor(.black)
                 }
                 
-            } .navigationBarTitle(Text("Crypto Money"))
-        }.onAppear {
-            cryptoListViewModal.downloadCryptos(url: URL(string: "https://raw.githubusercontent.com/atilsamancioglu/K21-JSONDataSet/master/crypto.json")!)
+            }.toolbar(content: {
+                Button {
+                    //button icersinde async func calistirmak
+                    Task.init {
+                        await cryptoListViewModal.downloadCryptosAsync(url: URL(string: "https://raw.githubusercontent.com/atilsamancioglu/K21-JSONDataSet/master/crypto.json")!)
+                    }
+                      } label: {
+                    Text("Refresh")
+                }
+
+            })
+            
+            .navigationBarTitle(Text("Crypto Money"))
+        }.task {
+            await cryptoListViewModal.downloadCryptosAsync(url: URL(string: "https://raw.githubusercontent.com/atilsamancioglu/K21-JSONDataSet/master/crypto.json")!)
+            
         }
+        
+        // old version
+        
+//        .onAppear {
+            
+           
+//            cryptoListViewModal.downloadCryptos(url: URL(string: "https://raw.githubusercontent.com/atilsamancioglu/K21-JSONDataSet/master/crypto.json")!)
+//        }
     }
 }
 
